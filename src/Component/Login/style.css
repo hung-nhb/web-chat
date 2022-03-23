@@ -1,0 +1,105 @@
+.background {
+    height: 100vh;
+    background-color: #E7CFC8;
+}
+
+.header {
+    height: 20%;
+    background-color: #89AEB2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    font-weight: bold;
+    font-size: 5vh;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 5px #000000;
+}
+
+.info {
+    font-size: 2.5vh;
+    color: white; 
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #70AE98;
+    height: 75%;
+    width: 30%;
+    border-radius: 10px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 60%;
+    left: 50%;
+    font-weight: bold;
+    box-shadow: 0px 0px 10px 5px #000000;
+}
+
+.title {
+    font-size: 5vh;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2%;
+}
+
+.forgot {
+    width: 75%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-style: italic;
+}
+
+.register {
+    margin-bottom: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #70AE98;
+    height: 70%;
+    width: 50%;
+    border-radius: 10px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    font-weight: bold;
+    box-shadow: 0px 0px 10px 5px #000000;
+}
+
+.reset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #70AE98;
+    height: 50%;
+    width: 50%;
+    border-radius: 10px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    font-weight: bold;
+    box-shadow: 0px 0px 10px 5px #000000;
+}
+
+.back {
+    margin-top: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* font-weight: normal; */
+}
