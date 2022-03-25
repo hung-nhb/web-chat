@@ -7,6 +7,7 @@ import './style.css'
 
 const Reset = () => {
   const [email, setEmail] = useState("");
+  // eslint-disable-next-line
   const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
 
@@ -14,7 +15,8 @@ const Reset = () => {
     if (loading)
       return;
     if (user)
-      navigate("/dashboard");
+      navigate("/messages");
+    // eslint-disable-next-line
   }, [user, loading]);
 
   return (

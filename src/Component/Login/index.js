@@ -6,24 +6,32 @@ import {
   logInWithEmailAndPassword,
   signInWithGoogle
 } from '../../Config/MyFirebase';
-import { TextField, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, Button } from '@mui/material';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  Button
+} from '@mui/material';
 import { Visibility, VisibilityOff, Google } from '@mui/icons-material';
 import './style.css';
 
 const Login = () => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  // eslint-disable-next-line
   const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) {
+    if (loading)
       return;
-    }
-    if (user) {
-      navigate("/dashboard");
-    }
+    if (user)
+      navigate("/messages");
+    // eslint-disable-next-line
   }, [user, loading]);
 
   return (
@@ -31,7 +39,8 @@ const Login = () => {
       <div className='header'>
         Welcome to NiChat
         <div className='info'>
-          developed by Hùng Nguyễn Hoàng Bảo
+          developed by&nbsp;
+          <a href='mailto:hung.nhb@gmail.com'>Hùng Nguyễn Hoàng Bảo</a>
         </div>
       </div>
       <div className='login'>

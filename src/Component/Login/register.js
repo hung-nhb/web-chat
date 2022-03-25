@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  auth,
-  registerWithEmailAndPassword,
-  signInWithGoogle,
-} from '../../Config/MyFirebase';
+import { auth, registerWithEmailAndPassword, } from '../../Config/MyFirebase';
 import {
   TextField,
   FormControl,
@@ -19,10 +15,11 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import './style.css'
 
 const Register = () => {
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  // eslint-disable-next-line
   const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
 
@@ -37,7 +34,8 @@ const Register = () => {
     if (loading)
       return;
     if (user)
-      navigate("/dashboard", { replace: true });
+      navigate("/messages", { replace: true });
+    // eslint-disable-next-line
   }, [user, loading]);
 
   return (
@@ -51,6 +49,7 @@ const Register = () => {
           label="Full Name"
           variant="outlined"
           margin="normal"
+          autoComplete='off'
           onChange={(e) => setName(e.target.value)}
         />
         <TextField

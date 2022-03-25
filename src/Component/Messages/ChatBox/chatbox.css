@@ -1,0 +1,63 @@
+.chatbox {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.name {
+    border-bottom: 1px solid white;
+    padding-left: 2rem;
+    height: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-weight: bold;
+}
+
+.messbox {
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 70%;
+    width: auto;
+    overflow: auto;
+    padding: 2%;
+}
+
+.myChat {
+    padding: 0.75rem;
+    background-color: rgb(214 150 187);
+    border-radius: 20px;
+    margin: 0.25rem;
+    max-width: 40%;
+    min-width: 20rem;
+}
+
+.friendChat {
+    padding: 0.75rem;
+    background-color: rgb(62 64 66);
+    border-radius: 20px;
+    margin: 0.25rem;
+    max-width: 40%;
+    min-width: 20rem;
+}
+
+.sendbox {
+    color: success;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 15%;
+    padding-left: 2rem;
+}
+
+.input {
+    background-color: rgb(62 64 66);
+    border-radius: 30px;
+    color: white;
+}
+
+.send {
+    color: rgb(214, 150, 187);
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
