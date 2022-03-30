@@ -17,6 +17,7 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDn7wxVioxPa87JdXpYGHXl9WoVX_NRabk",
@@ -40,17 +41,24 @@ const signInWithGoogle = async () => {
     const q = query(collection(db, "users"), where("uid", "==", user.uid));
     const docs = await getDocs(q);
     if (docs.docs.length === 0) {
+      let randomNID, qNID, docsNID;
+      do {
+        randomNID = Math.random().toString(36).substring(2);
+        qNID = query(collection(db, "users"), where("nid", "==", randomNID));
+        docsNID = await getDocs(q);
+      } while (docsNID.docs.length > 0);
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         name: user.displayName,
         authProvider: "google",
         email: user.email,
         photoUrl: user.photoURL,
+        nid: randomNID,
       });
     }
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    toast.error(err.message);
   }
 };
 
@@ -59,7 +67,7 @@ const logInWithEmailAndPassword = async (email, password) => {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    toast.error(err.message);
   }
 };
 
@@ -75,17 +83,17 @@ const registerWithEmailAndPassword = async (name, email, password) => {
     });
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    toast.error(err.message);
   }
 };
 
 const sendPasswordReset = async (email) => {
   try {
     await sendPasswordResetEmail(auth, email);
-    alert("Password reset link sent!");
+    toast.info("Password reset mail has been sent, please check your mailbox")
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    toast.error(err.message);
   }
 };
 

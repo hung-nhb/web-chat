@@ -2,37 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../Config/MyFirebase";
-import { query, collection, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, query, getDoc } from "firebase/firestore";
 import ListUser from './ListUser'
 import ChatBox from './ChatBox'
-import './messages.css'
+import { toast } from 'react-toastify';
 
 const Messages = () => {
   // eslint-disable-next-line
   const [user, loading, error] = useAuthState(auth);
-  const [res, setRes] = useState("");
-  const [listFriend, setListFriend] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null);
+  const [res, setRes] = useState();
+  const [currentChat, setCurrentChat] = useState();
   const navigate = useNavigate();
 
-  const fetchAllUser = async () => {
+  const fetchUser = () => {
     try {
-      const q = query(collection(db, "users"));
-      onSnapshot(q, (querySnapshot) => {
-        const temp = [];
-        querySnapshot.forEach((item) => temp.push(item.data()));
-        setListFriend(temp.map((item) => {
-          if (item.uid === user.uid)
-            return setRes(item);
-          else
-            return item;
-        }).filter((item) => item));
-        setCurrentChat(temp.find((item) => item.uid !== user.uid));
+      onSnapshot(doc(db, "users", user.uid), (docs) => {
+        setRes(docs.data());
+        // if (!res)
+        //   toast.success(`Login as ${docs.data().name}`);
       });
     }
     catch (err) {
       console.error(err);
-      alert("An error occured while fetching user data");
+      toast.error(err.message);
     }
   };
 
@@ -40,19 +32,29 @@ const Messages = () => {
     if (loading)
       return;
     if (!user)
-      return navigate("/login");
-    fetchAllUser();
+      return navigate("/web-chat/login");
+    fetchUser();
     // eslint-disable-next-line
   }, [user, loading]);
 
+  useEffect(() => {
+    if (res && res.uid !== user.uid)
+      toast.success(`Login as ${res.name}`);
+  }, [res])
+
   return (
-    <div className='dashboard'>
-      <ListUser
-        res={res}
-        listFriend={listFriend}
-        currentChat={currentChat}
-        setCurrentChat={setCurrentChat}
-      />
+    <div style={{
+      height: "100vh",
+      backgroundColor: "white",
+      color: "black",
+      display: "flex",
+    }}>
+      {res &&
+        <ListUser
+          res={res}
+          currentChat={currentChat}
+          setCurrentChat={setCurrentChat}
+        />}
       <ChatBox
         res={res}
         currentChat={currentChat}
