@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { db } from "../../../../Config/MyFirebase";
-import { collection, addDoc, doc, updateDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, setDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
 import { TextField } from '@mui/material';
 import { AddPhotoAlternate, Send } from '@mui/icons-material/';
 import { toast } from "react-toastify";
@@ -64,18 +64,39 @@ const SendBox = ({ res, currentChat }) => {
       await addDoc(collection(db, "messages", mid, mid), {
         ...lastestMessage
       });
-      await updateDoc(doc(db, "relationships", res.uid), {
-        friends: arrayRemove(currentChat),
-      });
-      await updateDoc(doc(db, "relationships", res.uid), {
-        friends: arrayUnion(currentChat),
-      });
-      await updateDoc(doc(db, "relationships", currentChat), {
-        friends: arrayRemove(res.uid),
-      });
-      await updateDoc(doc(db, "relationships", currentChat), {
-        friends: arrayUnion(res.uid),
-      });
+
+      const q = doc(db, "relationships", res.uid);
+      const docs = await getDoc(q);
+      if (docs.data()) {
+        await updateDoc(doc(db, "relationships", res.uid), {
+          friends: arrayRemove(currentChat),
+        });
+        await updateDoc(doc(db, "relationships", res.uid), {
+          friends: arrayUnion(currentChat),
+        });
+      }
+      else {
+        await setDoc(doc(db, "relationships", res.uid), {
+          friends: [currentChat],
+        });
+      }
+
+      const qO = doc(db, "relationships", currentChat);
+      const docsO = await getDoc(qO);
+      if (docsO.data()) {
+        await updateDoc(doc(db, "relationships", currentChat), {
+          friends: arrayRemove(res.uid),
+        });
+        await updateDoc(doc(db, "relationships", currentChat), {
+          friends: arrayUnion(res.uid),
+        });
+      }
+      else {
+        await setDoc(doc(db, "relationships", currentChat), {
+          friends: [res.uid],
+        });
+      }
+
       await setDoc(doc(db, "lastestMessages", mid), {
         ...lastestMessage
       });
