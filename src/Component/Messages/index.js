@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../../Config/MyFirebase";
-import { collection, doc, onSnapshot, query, getDoc } from "firebase/firestore";
+import { auth, db } from "MyFirebase";
+import { doc, onSnapshot } from "firebase/firestore";
 import ListUser from './ListUser'
 import ChatBox from './ChatBox'
 import { toast } from 'react-toastify';
@@ -10,17 +10,20 @@ import { toast } from 'react-toastify';
 const Messages = () => {
   // eslint-disable-next-line
   const [user, loading, error] = useAuthState(auth);
-  const [res, setRes] = useState();
+  const [listFriend, setListFriend] = useState([]);
   const [currentChat, setCurrentChat] = useState();
   const navigate = useNavigate();
 
-  const fetchUser = () => {
+  const fetchListFriend = async () => {
     try {
-      onSnapshot(doc(db, "users", user.uid), (docs) => {
-        setRes(docs.data());
-        // if (!res)
-        //   toast.success(`Login as ${docs.data().name}`);
-      });
+      onSnapshot(doc(db, "relationships", user.uid), (docs) => {
+        const friends = docs.data().friends;
+        if (friends.length > 0) {
+          setListFriend(friends);
+          if (!currentChat)
+            setCurrentChat(friends[0]);
+        }
+      })
     }
     catch (err) {
       console.error(err);
@@ -33,14 +36,9 @@ const Messages = () => {
       return;
     if (!user)
       return navigate("/web-chat/login");
-    fetchUser();
+    fetchListFriend();
     // eslint-disable-next-line
   }, [user, loading]);
-
-  useEffect(() => {
-    if (res && res.uid !== user.uid)
-      toast.success(`Login as ${res.name}`);
-  }, [res])
 
   return (
     <div style={{
@@ -49,16 +47,19 @@ const Messages = () => {
       color: "black",
       display: "flex",
     }}>
-      {res &&
+      {user && <>
         <ListUser
-          res={res}
+          user={user.uid}
+          listFriend={listFriend}
           currentChat={currentChat}
           setCurrentChat={setCurrentChat}
-        />}
-      <ChatBox
-        res={res}
-        currentChat={currentChat}
-      />
+        />
+        <ChatBox
+          user={user.uid}
+          listFriend={listFriend}
+          currentChat={currentChat}
+        />
+      </>}
     </div>
   );
 }

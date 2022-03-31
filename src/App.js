@@ -12,7 +12,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/web-chat/" element={<Navigate replace to="/web-chat/login" />} />
+          <Route path="/web-chat/*" element={<Navigate replace to="/web-chat/login" />} />
           <Route path="/web-chat/login" element={<Login />} />
           <Route path="/web-chat/messages" element={<Messages />} />
         </Routes>

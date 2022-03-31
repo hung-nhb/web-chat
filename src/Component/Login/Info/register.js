@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router-dom";
 import { auth, registerWithEmailAndPassword, } from '../../../Config/MyFirebase';
 import {
   TextField,
@@ -12,6 +11,7 @@ import {
   Button
 } from '@mui/material';
 import { Close, Visibility, VisibilityOff } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles(() => ({
   register: {
@@ -40,11 +40,10 @@ const Register = ({ close }) => {
   const [showPassword, setShowPassword] = useState(false);
   // eslint-disable-next-line
   const [user, loading, error] = useAuthState(auth);
-  const navigate = useNavigate();
 
   const register = () => {
     if (!name)
-      alert("Please enter name!");
+      toast.error("Please enter name!");
     else
       registerWithEmailAndPassword(name, email, password);
   }

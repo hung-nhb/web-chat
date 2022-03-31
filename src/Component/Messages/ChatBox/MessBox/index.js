@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import { makeStyles } from "@mui/styles";
-import { db } from "../../../../Config/MyFirebase";
-import { query, collection, onSnapshot } from "firebase/firestore";
+import { db } from "MyFirebase";
+import { query, collection, onSnapshot, doc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles(() => ({
   messBox: {
@@ -45,15 +46,16 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const MessBox = ({ res, currentChat }) => {
+const MessBox = ({ user, currentChat }) => {
   const styles = useStyles();
   const [log, setLog] = useState();
+  const [lastestMessage, setLastestMessage] = useState();
   const messagesEndRef = useRef(null);
 
   const fetchMessage = async () => {
-    const mid = res.uid > currentChat
-      ? `{${res.uid}-${currentChat}}`
-      : `{${currentChat}-${res.uid}}`;
+    const mid = user > currentChat
+      ? `{${user}-${currentChat}}`
+      : `{${currentChat}-${user}}`;
 
     try {
       const q = query(collection(db, "messages", mid, mid));
@@ -62,10 +64,13 @@ const MessBox = ({ res, currentChat }) => {
         querySnapshot.forEach((item) => temp.push(item.data()));
         setLog(temp.sort((a, b) => a.timeStamp - b.timeStamp));
       });
+      onSnapshot(doc(db, "lastestMessages", mid), (docs) => {
+        setLastestMessage(docs.data());
+      });
     }
     catch (err) {
       console.error(err);
-      alert("Error Fetch Messages");
+      toast.error(err.message);
     }
   };
 
@@ -84,33 +89,47 @@ const MessBox = ({ res, currentChat }) => {
     scrollToBottom();
   }, [log]);
 
+  const getTime = (time) => {
+    const temp = new Date(time);
+    const hours = temp.getHours();
+    const minutes = temp.getMinutes();
+    return (hours > 9 ? hours : `0${hours}`) + ":" + (minutes > 9 ? minutes : `0${minutes}`);
+  };
+
   return (
     <div className={styles.messBox}>
       {!log && <div className={styles.noFriend}>
         Please find a friend with ID to chat
       </div>}
-      {log && log.map((item, index) => (
-        <div key={index}
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent:
-              item.idFrom === res.uid
-                ? "flex-end"
-                : "flex-start",
-          }}
-        >
-          <div className={
-            item.idFrom === res.uid
-              ? styles.myChat
-              : styles.friendChat}
+      {log && <>
+        {log.map((item, index) => (
+          <div key={index}
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent:
+                item.idFrom === user
+                  ? "flex-end"
+                  : "flex-start",
+            }}
           >
-            {item.content}
+            <div className={
+              item.idFrom === user
+                ? styles.myChat
+                : styles.friendChat}
+            >
+              {item.content}
+            </div>
           </div>
+        ))}
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          {lastestMessage && lastestMessage.idFrom === user &&
+            lastestMessage.seen && `Seen at ${getTime(lastestMessage.seenTimeStamp.seconds * 1000)}`}
         </div>
-      ))}
+      </>
+      }
       <div ref={messagesEndRef} />
-    </div>
+    </div >
   );
 };
 

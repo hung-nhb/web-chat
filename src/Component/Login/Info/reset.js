@@ -3,7 +3,6 @@ import { makeStyles } from "@mui/styles";
 import { sendPasswordReset } from '../../../Config/MyFirebase';
 import { TextField, Button } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { toast } from "react-toastify";
 
 const useStyles = makeStyles(() => ({
   register: {

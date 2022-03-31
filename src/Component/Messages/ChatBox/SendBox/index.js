@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { db } from "../../../../Config/MyFirebase";
-import { collection, addDoc, doc, updateDoc, setDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, setDoc, getDoc } from "firebase/firestore";
 import { TextField } from '@mui/material';
 import { AddPhotoAlternate, Send } from '@mui/icons-material/';
 import { toast } from "react-toastify";
@@ -29,17 +29,18 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SendBox = ({ res, currentChat }) => {
+const SendBox = ({ user, listFriend, currentChat }) => {
   const styles = useStyles();
   const [mid, setMid] = useState();
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (currentChat) {
-      setMid(res.uid > currentChat
-        ? `{${res.uid}-${currentChat}}`
-        : `{${currentChat}-${res.uid}}`);
+      setMid(user > currentChat
+        ? `{${user}-${currentChat}}`
+        : `{${currentChat}-${user}}`);
     }
+    // eslint-disable-next-line
   }, [currentChat]);
 
   const sendMessage = async () => {
@@ -56,7 +57,7 @@ const SendBox = ({ res, currentChat }) => {
     try {
       const lastestMessage = {
         content: message,
-        idFrom: res.uid,
+        idFrom: user,
         idTo: currentChat,
         timeStamp: new Date(),
       };
@@ -64,41 +65,24 @@ const SendBox = ({ res, currentChat }) => {
       await addDoc(collection(db, "messages", mid, mid), {
         ...lastestMessage
       });
-
-      const q = doc(db, "relationships", res.uid);
-      const docs = await getDoc(q);
-      if (docs.data()) {
-        await updateDoc(doc(db, "relationships", res.uid), {
-          friends: arrayRemove(currentChat),
-        });
-        await updateDoc(doc(db, "relationships", res.uid), {
-          friends: arrayUnion(currentChat),
-        });
-      }
-      else {
-        await setDoc(doc(db, "relationships", res.uid), {
-          friends: [currentChat],
-        });
-      }
-
-      const qO = doc(db, "relationships", currentChat);
-      const docsO = await getDoc(qO);
-      if (docsO.data()) {
-        await updateDoc(doc(db, "relationships", currentChat), {
-          friends: arrayRemove(res.uid),
-        });
-        await updateDoc(doc(db, "relationships", currentChat), {
-          friends: arrayUnion(res.uid),
-        });
-      }
-      else {
-        await setDoc(doc(db, "relationships", currentChat), {
-          friends: [res.uid],
-        });
-      }
-
       await setDoc(doc(db, "lastestMessages", mid), {
-        ...lastestMessage
+        ...lastestMessage,
+        seen: false
+      });
+
+      updateDoc(doc(db, "relationships", user), {
+        friends: listFriend.length > 0
+          ? [currentChat, ...(listFriend.filter((item) => item !== currentChat))]
+          : [currentChat]
+      });
+
+      const q = doc(db, "relationships", currentChat);
+      const docs = await getDoc(q);
+      const friends = docs.data().friends;
+      updateDoc(q, {
+        friends: friends.length > 0
+          ? [user, ...(friends.filter((item) => item !== user))]
+          : [user]
       });
 
       setMessage("");

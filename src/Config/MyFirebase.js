@@ -45,7 +45,7 @@ const signInWithGoogle = async () => {
       do {
         randomNID = Math.random().toString(36).substring(2);
         qNID = query(collection(db, "users"), where("nid", "==", randomNID));
-        docsNID = await getDocs(q);
+        docsNID = await getDocs(qNID);
       } while (docsNID.docs.length > 0);
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
@@ -54,6 +54,9 @@ const signInWithGoogle = async () => {
         email: user.email,
         photoUrl: user.photoURL,
         nid: randomNID,
+      });
+      await setDoc(doc(db, "relationships", user.uid), {
+        friends: [],
       });
     }
   } catch (err) {
@@ -75,11 +78,21 @@ const registerWithEmailAndPassword = async (name, email, password) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
+    let randomNID, qNID, docsNID;
+    do {
+      randomNID = Math.random().toString(36).substring(2);
+      qNID = query(collection(db, "users"), where("nid", "==", randomNID));
+      docsNID = await getDocs(qNID);
+    } while (docsNID.docs.length > 0);
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       name,
       authProvider: "local",
       email,
+      nid: randomNID,
+    });
+    await setDoc(doc(db, "relationships", user.uid), {
+      friends: [],
     });
   } catch (err) {
     console.error(err);

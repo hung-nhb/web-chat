@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../../../Config/MyFirebase";
 import { makeStyles } from "@mui/styles";
-import defaultAvatar from "../../../../assets/ic_default_avatar.png"
+import defaultAvatar from "assets/ic_default_avatar.png"
 import { Call, Videocam, MoreVert } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import Popup from 'reactjs-popup';
 import { toast } from "react-toastify";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const useStyles = makeStyles(() => ({
   info: {
@@ -61,12 +61,12 @@ const Info = ({ currentChat }) => {
             <img
               className={styles.avata}
               alt='avata'
-              src={(data && data.photoUrl) || defaultAvatar}
+              src={data.photoUrl || defaultAvatar}
             />
           </div>
           <div className={styles.name}>
             <div style={{ fontSize: "1.0625rem", fontWeight: "bold" }}>
-              {data && data.name}
+              {`${data.name} (${data.nid})`}
             </div>
             <div style={{ fontSize: ".8125rem" }}>
               Chắc là đang hoạt động

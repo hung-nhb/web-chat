@@ -14,6 +14,7 @@
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^9.6.9",
     "gh-pages": "^3.2.3",
+    "link-module-alias": "^1.2.0",
     "moment": "^2.29.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -29,8 +30,14 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "postinstall": "link-module-alias",
+    "preinstall": "link-module-alias clean",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
+  },
+  "_moduleAliases": {
+    "MyFirebase": "src/Config/MyFirebase.js",
+    "assets": "src/assets"
   },
   "eslintConfig": {
     "extends": [

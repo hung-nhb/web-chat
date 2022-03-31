@@ -12,14 +12,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ChatBox = ({ res, currentChat }) => {
+const ChatBox = ({ user, listFriend, currentChat }) => {
   const styles = useStyles();
 
   return (
     <div className={styles.chatBox}>
       <Info currentChat={currentChat} />
-      <MessBox res={res} currentChat={currentChat} />
-      <SendBox res={res} currentChat={currentChat} />
+      <MessBox user={user} currentChat={currentChat} />
+      <SendBox user={user} listFriend={listFriend} currentChat={currentChat} />
     </div>
   );
 }
